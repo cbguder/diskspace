@@ -52,7 +52,7 @@ class DiskSpaceScreenlet(screenlets.Screenlet):
 	
 	# Default Meta-Info for Screenlets
 	__name__    = 'DiskSpaceScreenlet'
-	__version__ = '0.4'
+	__version__ = '0.5'
 	__author__  = 'Can Berk Güder (based on Disk Usage Screenlet by Helder Fraga aka Whise)'
 	__desc__    = __doc__
 
