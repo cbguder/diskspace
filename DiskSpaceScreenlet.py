@@ -142,23 +142,22 @@ class DiskSpaceScreenlet(screenlets.Screenlet):
 			self.__dict__['mount_points'] = value
 			self.__info = self.get_drive_info()
 		elif name == '_DiskSpaceScreenlet__info':
-			self.__dict__['width'] = 220
-			self.__dict__['height'] = DRIVE_HEIGHT
 			if self.stack_horizontally:
 				self.__dict__['width'] = 220 * len(value)
+				self.__dict__['height'] = DRIVE_HEIGHT + 2 * PADDING
 			else:
+				self.__dict__['width'] = 220
 				self.__dict__['height'] = DRIVE_HEIGHT * len(value) + 2 * PADDING
 			if self.window:
-				self.window.resize(self.width, self.height)
+				self.window.resize(self.width * self.scale, self.height * self.scale)
 #			self.update_graph()
 		elif name == 'stack_horizontally':
-			self.__dict__['width'] = 220
-			self.__dict__['height'] = DRIVE_HEIGHT
 			if self.stack_horizontally:
 				self.__dict__['width'] = 220 * len(self.__info)
+				self.__dict__['height'] = DRIVE_HEIGHT + 2 * PADDING
 			else:
+				self.__dict__['width'] = 220
 				self.__dict__['height'] = DRIVE_HEIGHT * len(self.__info) + 2 * PADDING
-			self.window.resize(self.width, self.height)
 			self.update_graph()
 		else:
 			self.update_graph()
@@ -259,9 +258,9 @@ class DiskSpaceScreenlet(screenlets.Screenlet):
 
 	def on_draw_shape(self, ctx):
 		if self.stack_horizontally:
-			ctx.rectangle(0, 0, 220 * self.scale * len(self.__info), DRIVE_HEIGHT * self.scale)
+			ctx.rectangle(0, 0, (220 * len(self.__info) + 2 * PADDING) * self.scale, (DRIVE_HEIGHT +  2 * PADDING) * self.scale)
 		else:
-			ctx.rectangle(0, 0, 220 * self.scale, DRIVE_HEIGHT * len(self.__info) * self.scale)
+			ctx.rectangle(0, 0, 220 * self.scale, (DRIVE_HEIGHT * len(self.__info) + 2 * PADDING) * self.scale)
 
 		ctx.fill()
 	
