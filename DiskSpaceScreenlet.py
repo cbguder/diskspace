@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 #
-# Copyright © 2007 Can Berk Güder <cbguder@su.sabanciuniv.edu>
+# Copyright (c) 2007 Can Berk Güder <cbguder@su.sabanciuniv.edu>
 #
 # This file is part of Disk Space Screenlet.
 #
