@@ -165,9 +165,9 @@ class DiskSpaceScreenlet(screenlets.Screenlet):
 	def get_drive_info(self):
 		result = []
 		temp = {}
-		proc = subprocess.Popen('df -h -a -P | grep ^/dev/ ', shell='true', stdout=subprocess.PIPE)
+		proc = subprocess.Popen('df -hP', shell='true', stdout=subprocess.PIPE)
 		sdevs = proc.stdout.read().rsplit('\n')
-		sdevs.pop()
+		sdevs = sdevs[1:-1]
 
 		for stdev in sdevs:
 			sdev = re.findall("(\S*)\s*", stdev)
