@@ -1,0 +1,7 @@
+[Screenlet Package]
+Name=DiskSpaceScreenlet
+Author=Can Berk Güder (based on Disk Usage Screenlet by Helder Fraga aka Whise)
+Desc=A screenlet that displays free/used space information for selected hard drives.
+Version=0.5
+ApiVersion=0.0.12
+Created=2008/11/18
