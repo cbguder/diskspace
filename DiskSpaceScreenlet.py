@@ -187,12 +187,12 @@ class DiskSpaceScreenlet(screenlets.Screenlet):
 	
 	def update_graph(self):
 		self.redraw_canvas()
-		return True
 
 	def timeout(self):
 		self.__info = self.get_drive_info()
 		self.recalculate_size()
 		self.update_graph()
+		return True
 	
 	def on_draw(self, ctx):
 		ctx.scale(self.scale, self.scale)
