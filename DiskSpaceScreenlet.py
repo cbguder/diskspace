@@ -52,7 +52,7 @@ class DiskSpaceScreenlet(screenlets.Screenlet):
 	
 	# Default Meta-Info for Screenlets
 	__name__    = 'DiskSpaceScreenlet'
-	__version__ = '0.5'
+	__version__ = '0.6'
 	__author__  = 'Can Berk Güder (based on Disk Usage Screenlet by Helder Fraga aka Whise)'
 	__desc__    = __doc__
 
@@ -107,61 +107,50 @@ class DiskSpaceScreenlet(screenlets.Screenlet):
 		self.add_option(ColorOption('DiskSpace', 'color_text', self.color_text, 'Text Color', ''))
 		self.add_option(ColorOption('DiskSpace', 'frame_color', self.frame_color, 'Frame Color', ''))
 
-
-	def on_init(self):
-		# add default menu items
 		self.add_default_menuitems()
-
-		# init the timeout function
 		self.update_interval = self.update_interval
 
-	def on_init (self):
-		print "Screenlet has been initialized."
-		# add default menuitems
-		self.add_default_menuitems()	
-
-	def __setattr__(self, name, value):
-		screenlets.Screenlet.__setattr__(self, name, value)
-
+	def on_after_set_atribute(self, name, value):
 		if name == 'update_interval':
-			if value <= 0:
-				value = 1
-
-			self.__dict__['update_interval'] = value
-
-			if self.__timeout:
-				gobject.source_remove(self.__timeout)
-
-			self.__timeout = gobject.timeout_add(int(value * 1000), self.update_graph)
+			self.on_set_update_interval()
 		elif name == 'mount_points':
-			for i in range(len(value)):
-				value[i] = value[i].strip()
-				if value[i] != '/':
-					value[i] = value[i].rstrip('/')
-			
-			self.__dict__['mount_points'] = value
-			self.__info = self.get_drive_info()
-		elif name == '_DiskSpaceScreenlet__info':
-			if self.stack_horizontally:
-				self.__dict__['width'] = 220 * len(value)
-				self.__dict__['height'] = DRIVE_HEIGHT + 2 * PADDING
-			else:
-				self.__dict__['width'] = 220
-				self.__dict__['height'] = DRIVE_HEIGHT * len(value) + 2 * PADDING
-			if self.window:
-				self.window.resize(self.width * self.scale, self.height * self.scale)
-#			self.update_graph()
+			self.on_set_mount_points()
 		elif name == 'stack_horizontally':
-			if self.stack_horizontally:
-				self.__dict__['width'] = 220 * len(self.__info)
-				self.__dict__['height'] = DRIVE_HEIGHT + 2 * PADDING
-			else:
-				self.__dict__['width'] = 220
-				self.__dict__['height'] = DRIVE_HEIGHT * len(self.__info) + 2 * PADDING
-			self.update_graph()
+			self.on_set_stack_horizontally()
 		else:
 			self.update_graph()
-	
+
+	def on_set_update_interval(self):
+		if self.update_interval <= 0:
+			self.update_interval = 1
+		if self.__timeout:
+			gobject.source_remove(self.__timeout)
+		self.__timeout = gobject.timeout_add(int(self.update_interval * 1000), self.timeout)
+
+	def on_set_mount_points(self):
+		for i, mp in enumerate(self.mount_points):
+			mp = mp.strip()
+			if mp != '/':
+				mp = mp.rstrip('/')
+			self.mount_points[i] = mp
+
+		self.timeout()
+
+	def on_set_stack_horizontally(self):
+		self.recalculate_size()
+		self.update_graph()
+
+	def recalculate_size(self):	
+		if self.stack_horizontally:
+			self.width  = 220 * len(self.__info)
+			self.height = DRIVE_HEIGHT + 2 * PADDING
+		else:
+			self.width  = 220
+			self.height = DRIVE_HEIGHT * len(self.__info) + 2 * PADDING
+
+		if self.window:
+			self.window.resize(self.width * self.scale, self.height * self.scale)
+
 	def get_drive_info(self):
 		result = []
 		temp = {}
@@ -196,11 +185,14 @@ class DiskSpaceScreenlet(screenlets.Screenlet):
 
 		return result
 	
-	# timeout-function
 	def update_graph(self):
-		self.__info = self.get_drive_info()
 		self.redraw_canvas()
 		return True
+
+	def timeout(self):
+		self.__info = self.get_drive_info()
+		self.recalculate_size()
+		self.update_graph()
 	
 	def on_draw(self, ctx):
 		ctx.scale(self.scale, self.scale)
